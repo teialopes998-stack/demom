@@ -1,0 +1,139 @@
+-- [[ ==================================================== ]]
+-- [[ File captured by: old fuck ]]
+-- [[ Discord: https://discord.gg/6ECbbxYsx ]]
+-- [[ Type: SOURCE_CODE ]]
+-- [[ TIMESTAMP: 23:42:22 ]]
+-- [[ ==================================================== ]]
+
+ function _w(t) t = t or 0.03 if task and type(task.wait) == "function" then task.wait(t) elseif type(wait) == "function" then wait(t) end end do local n = 0 while n < 200 do local ok, loaded; do local __m = {pcall(function() return game:IsLoaded() end)}; ok = __m[1]; loaded = __m[2]; end if ok and loaded then break end n = n + 1; _w(0.05) end end
+_w(0.1); print("[Zombie.Vs] Starting...");  Players = game:GetService("Players");  RunService = game:GetService("RunService");  UIS = game:GetService("UserInputService");  TS = game:GetService("TweenService");  Lighting = game:GetService("Lighting");  HS = game:GetService("HttpService");  LP = Players.LocalPlayer if not LP then local ok, plr; do local __m = {pcall(function() return Players:WaitForChild("LocalPlayer", 15) end)}; ok = __m[1]; plr = __m[2]; end if ok then LP = plr end end if not LP then warn("[Zombie.Vs] LocalPlayer not found - abort") return end  _genv = _G pcall(function()
+if type(getgenv) == "function" then local g = getgenv() if type(g) == "table" then _genv = g end end end)  function destroyOldGuis() local names = {"VenomVSHub", "CursedHub", "VersincMobileButtons", "VersicnIntro", "BrainrotEnterIntro", "ZombieVSInfoBar"}; local parents = {} pcall(function() table.insert(parents, game:GetService("CoreGui")) end) pcall(function() if LP then table.insert(parents, LP:FindFirstChild("PlayerGui") or LP:WaitForChild("PlayerGui", 2)) end end) pcall(function() if type(gethui) == "function" then table.insert(parents, gethui()) end end) for _, parent in ipairs(parents) do if parent then
+for _, name in ipairs(names) do pcall(function() local o = parent:FindFirstChild(name) while o do o:Destroy(); o = parent:FindFirstChild(name) end end) end end end _G.VersincMobileButtonRefs = {} end if _genv.__ZombieVSHubLoaded then pcall(destroyOldGuis); _genv.__ZombieVSHubLoaded = false warn("[Zombie.Vs] Old instance cleaned - reloading...") end pcall(destroyOldGuis); _G.__AntiTPBatEnabled = false
+-- Anti-TP Bat removed; compatibility stub prevents stale config/keybinds from activating it.
+AntiTPBat = { mode = "v1", enabled = false, set = function() return false end, setMode = function() return "v1" end, isOn = function() return false end, toggle = function() return false end, stop = function() end, setupChar = function() end }
+  getconnections = getconnections or get_signal_cons or getconnects or (syn and syn.get_signal_cons) or nil;  _IS_MOBILE = false pcall(function() _IS_MOBILE = UIS.TouchEnabled == true and UIS.KeyboardEnabled ~= true end) pcall(function() if UIS.TouchEnabled and not UIS.MouseEnabled then _IS_MOBILE = true end end)  function _perfEveryN(nMobile, nDesktop) local n = _IS_MOBILE and nMobile or nDesktop if n <= 1 then return true end local bucket = math.floor(os.clock() * 60)
+return (bucket % n) == 0 end  function _perfDue(key, mobileSec, desktopSec) return _perfEveryN(math.max(1, math.floor((mobileSec or 0.1) * 60)), math.max(1, math.floor((desktopSec or 0.05) * 60))) end  S = { mvpBypassSpeed = 55, NS = 59.5, CS = 28.8, LAGGER_SPEED = 24.5, LAGGER_CARRY_SPEED = 15, speedMode = false, antiRagdollEnabled = false, ragdollStealEnabled = false, antiRagdollMode = 1, aimbotMode = 1, antiBatBypassEnabled = false, autoBatV2Enabled = false, laggerToggled = false, laggerPhase = 0, autoCarrySpeedEnabled = false, setAutoCarrySpeedVisual = nil, _autoCarryFromSteal = false, _autoCarryWaitingPickup = false,
+_autoCarryGraceUntil = 0, _autoCarryPickupUntil = 0, _autoCarryReturnMode = nil, _stealAttrWasActive = false, medusaCounterEnabled = false, medusaResetEnabled = false, batCounterEnabled = false, unwalkEnabled = false, medusaDebounce = false, medusaLastUsed = 0, dropActive = false, autoLeftEnabled = false, autoRightEnabled = false, autoLeftSetVisual = nil, autoRightSetVisual = nil, speedLabel = nil, autoBatEnabled = false, autoSwingEnabled = true, informationE01Enabled = true, autoBatSetVisual = nil, autoBatEquippedThisRun = false, _autoBatTarget = nil, _autoBatLastScan = 0, resetAutoBatMotion = nil,
+AUTO_BAT_SPEED = 58, AUTO_BAT_VERT_SPEED = 52, AUTO_BAT_DIST = -2.8, AUTO_BAT_HEIGHT = 4.75, AUTO_BAT_V_OFF = 1, AUTO_BAT_TURN_SPEED = 285, AUTO_BAT_MAX_TURN_RATE = 28, setBatCounterVisual = nil, startBatCounter = nil, stopBatCounter = nil, enableAutoBat = nil, disableAutoBat = nil, antiLagEnabled = false, removeAccessoriesEnabled = false, motionBlurEnabled = false, xrayBasesEnabled = false, xrayBrainrotsEnabled = false, antiDieEnabled = false, antiFlingShieldEnabled = false, duelsAntiDropEnabled = false, mysteryAntiBatEnabled = false, antiLagDescConn = nil, stretchRezEnabled = false, stretchRezConn = nil, setStretchRezVisual = nil, unwalkSavedAnimate = nil,
+_anyKeyListening = false, autoTPEnabled = false, autoTPHeight = 20, autoTPConn = nil, setAutoTPVisual = nil, autoSaveEnabled = true, _lastSaveOk = false, _lastSaveAt = 0, cursedResetRemote = nil, CURSED_RESET_GUID = "f888ee6e-c86d-46e1-93d7-0639d6635d42", AntiRagdollConns = {}, noPlayerCollisionEnabled = false, safeModeEnabled = false, autoResetOnMedEnabled = false, showTracerEnabled = false, ragdollCountdownEnabled = false, guiLocked = false, hideMobileButtons = false, lockMobileButtons = false, allLockButtons = false, moveButtons = false, circleButtons = false, progressBarScale = 100, infJumpMode = "hold",
+mirrorTPDownEnabled = false, _bodyLockPausedByCombat = false, _bodyLockWanted = false, _bodyLockPausedByBrainrot = false, mobileButtonScale = 0.70, keyboardOverlayEnabled = false, customToolsEnabled = false, rainbowToolsEnabled = false, transparentToolsEnabled = false, customSoundsEnabled = false, customToolSkinBat = "DiamondSword", customToolSkinMedusa = "GoldenDesertEagle", }  VS, UI, F = {}, {}, {}  NS, CS = S.NS, S.CS; CONFIG_FILE, CONFIG_FILE_LEGACY = "ZombieVSHubConfig.json", "cursedPC.json"  _isfile = isfile or (syn and syn.isfile) or function(f) local ok,r=pcall(function() return readfile(f) end) return ok end  _readfile = readfile or (syn and syn.readfile) or function() return nil end
+ _writefile = writefile or (syn and syn.writefile) or (getgenv and getgenv().writefile) or nil;  antiRagdollConn = nil;  antiRagdollModeActive = nil;  ragdollConnections = {};  cachedCharData = {};  isBoosting = false;  BOOST_SPEED = 400  AR_DEFAULT_SPEED = 16  function arGetNormalSpeed() return AR_DEFAULT_SPEED end  function arV2ResetCharacter(char) local hum = char and char:FindFirstChildOfClass("Humanoid"); local root = char and char:FindFirstChild("HumanoidRootPart") if not hum or not root or hum.Health <= 0 then return end pcall(function()
+hum:ChangeState(Enum.HumanoidStateType.GettingUp); hum:ChangeState(Enum.HumanoidStateType.Running) root.Velocity = Vector3.zero; root.RotVelocity = Vector3.zero; root.AssemblyLinearVelocity = Vector3.zero; root.AssemblyAngularVelocity = Vector3.zero hum.PlatformStand = false; hum.Sit = false; hum.AutoRotate = true hum.JumpPower = hum.JumpPower > 0 and hum.JumpPower or 50 hum.WalkSpeed = hum.WalkSpeed > 0 and hum.WalkSpeed or AR_DEFAULT_SPEED for _, obj in ipairs(char:GetDescendants()) do if obj:IsA("Motor6D") then obj.Enabled = true
+elseif obj:IsA("Constraint") or obj:IsA("BallSocketConstraint") or obj:IsA("HingeConstraint") then obj.Enabled = true elseif obj:IsA("BasePart") then obj.CanCollide = true; obj.AssemblyLinearVelocity = Vector3.zero; obj.AssemblyAngularVelocity = Vector3.zero end end if workspace.CurrentCamera then workspace.CurrentCamera.CameraSubject = hum end local playerModule = LP:FindFirstChild("PlayerScripts") and LP.PlayerScripts:FindFirstChild("PlayerModule"); local controlModule = playerModule and playerModule:FindFirstChild("ControlModule") if controlModule then
+local loaded, module; do local __m = {pcall(require, controlModule)}; loaded = __m[1]; module = __m[2]; end if loaded and module and module.Enable then pcall(function() module:Enable() end) end end end) end  function arCacheCharacterData() local char = LP.Character if not char then return false end local hum = char:FindFirstChildOfClass("Humanoid"); local root = char:FindFirstChild("HumanoidRootPart") if not hum or not root then return false end cachedCharData = { character = char, humanoid = hum, root = root }; S._ragdollCache = cachedCharData return true end  function arDisconnectAll()
+for _, conn in ipairs(ragdollConnections) do pcall(function() conn:Disconnect() end) end ragdollConnections = {} end  AR_STATES = { [Enum.HumanoidStateType.Physics] = true, [Enum.HumanoidStateType.Ragdoll] = true, [Enum.HumanoidStateType.FallingDown] = true }  function arIsRagdolled() if not cachedCharData.humanoid then return false end if AR_STATES[cachedCharData.humanoid:GetState()] then return true end local endTime = LP:GetAttribute("RagdollEndTime") return (endTime and (endTime - workspace:GetServerTimeNow()) > 0) or false end  function arForceExitRagdoll()
+if not cachedCharData.humanoid or not cachedCharData.root then return end pcall(function() LP:SetAttribute("RagdollEndTime", workspace:GetServerTimeNow()) end) for _, d in ipairs(cachedCharData.character:GetDescendants()) do if d:IsA("BallSocketConstraint") or (d:IsA("Attachment") and tostring(d.Name):find("RagdollAttachment")) then pcall(function() d:Destroy() end) end end if not isBoosting then isBoosting = true pcall(function() cachedCharData.humanoid.WalkSpeed = BOOST_SPEED end) end pcall(function()
+if cachedCharData.humanoid.Health > 0 then cachedCharData.humanoid:ChangeState(Enum.HumanoidStateType.Running) end cachedCharData.root.Anchored = false end) end  function arHeartbeatLoop() while antiRagdollModeActive == "v1" do task.wait() local currentlyRagdolled = arIsRagdolled() if currentlyRagdolled then arForceExitRagdoll() elseif isBoosting and not currentlyRagdolled then isBoosting = false if cachedCharData.humanoid then pcall(function() cachedCharData.humanoid.WalkSpeed = AR_DEFAULT_SPEED end) end end end end function F.startAntiRagdoll()
+local requestedMode = (S.antiRagdollMode == 2) and "v2" or "v1" if antiRagdollModeActive == requestedMode and (#S.AntiRagdollConns > 0 or antiRagdollConn) then return end F.stopAntiRagdoll() if not arCacheCharacterData() then return end antiRagdollModeActive = requestedMode if requestedMode == "v2" then antiRagdollConn = RunService.Heartbeat:Connect(function() if antiRagdollModeActive ~= "v2" or not S.antiRagdollEnabled then return end local char = LP.Character; local hum = char and char:FindFirstChildOfClass("Humanoid") if not hum then return end local state = hum:GetState()
+if AR_STATES[state] or state == Enum.HumanoidStateType.Dead or hum.PlatformStand == true or hum.Sit == true then arV2ResetCharacter(char) end end) table.insert(S.AntiRagdollConns, antiRagdollConn) return end local camConn = RunService.RenderStepped:Connect(function() local cam = workspace.CurrentCamera if cam and cachedCharData.humanoid then cam.CameraSubject = cachedCharData.humanoid end end) table.insert(ragdollConnections, camConn); table.insert(S.AntiRagdollConns, camConn) local respawnConn = LP.CharacterAdded:Connect(function()
+isBoosting = false; task.wait(0.5); arCacheCharacterData() end) table.insert(ragdollConnections, respawnConn); table.insert(S.AntiRagdollConns, respawnConn); task.spawn(arHeartbeatLoop) end function F.stopAntiRagdoll() antiRagdollModeActive = nil if antiRagdollConn then pcall(function() antiRagdollConn:Disconnect() end); antiRagdollConn = nil end if isBoosting and cachedCharData.humanoid then pcall(function() cachedCharData.humanoid.WalkSpeed = AR_DEFAULT_SPEED end) end isBoosting = false; arDisconnectAll() for _, conn in pairs(S.AntiRagdollConns) do pcall(function() conn:Disconnect() end) end
+S.AntiRagdollConns = {}; cachedCharData = {}; S._ragdollCache = {} end
+-- Anti Drop portado do 404 Anti Drop, sem GUI, billboard ou background.
+do
+local _antiDropMt = nil
+local _antiDropOldIndex = nil
+local _antiDropOldNewIndex = nil
+local _antiDropSpoofedVelocity = Vector3.zero
+local _antiDropActive = false
+function F.startDuelsAntiDrop()
+if _antiDropActive then S.duelsAntiDropEnabled = true; return end
+local ok, mt; do local __m = {pcall(getrawmetatable, game)}; ok = __m[1]; mt = __m[2]; end
+if not ok or not mt or type(setreadonly) ~= "function" or type(newcclosure) ~= "function" or type(checkcaller) ~= "function" then return end
+_antiDropMt = mt
+_antiDropOldIndex = mt.__index
+_antiDropOldNewIndex = mt.__newindex
+local installed = pcall(function()
+setreadonly(mt, false)
+mt.__index = newcclosure(function(self, key)
+if not checkcaller() and (key == "AssemblyLinearVelocity" or key == "Velocity") and typeof(self) == "Instance" and self:IsA("BasePart") and self.Name == "HumanoidRootPart" and LP.Character and self:IsDescendantOf(LP.Character) then
+return _antiDropSpoofedVelocity
+end
+return _antiDropOldIndex(self, key)
+end)
+mt.__newindex = newcclosure(function(self, key, value)
+if not checkcaller() and (key == "AssemblyLinearVelocity" or key == "Velocity") and typeof(self) == "Instance" and self:IsA("BasePart") and self.Name == "HumanoidRootPart" and LP.Character and self:IsDescendantOf(LP.Character) then
+_antiDropSpoofedVelocity = value
+return
+end
+return _antiDropOldNewIndex(self, key, value)
+end)
+setreadonly(mt, true)
+end)
+if installed then _antiDropActive = true; S.duelsAntiDropEnabled = true else pcall(function() setreadonly(mt, true) end) end
+end
+function F.stopDuelsAntiDrop()
+S.duelsAntiDropEnabled = false
+if not _antiDropActive then return end
+pcall(function()
+setreadonly(_antiDropMt, false)
+_antiDropMt.__index = _antiDropOldIndex
+_antiDropMt.__newindex = _antiDropOldNewIndex
+setreadonly(_antiDropMt, true)
+end)
+_antiDropActive = false
+_antiDropMt = nil
+_antiDropOldIndex = nil
+_antiDropOldNewIndex = nil
+end end
+-- Anti Bat portado do Mystery.Vs.
+do
+local _mysteryAntiBatConn = nil
+local _mysteryAntiBatSpeed = 10000
+local _mysteryAntiBatAngle = 0
+local _mysteryAntiBatDirection = 1
+local function stopMysteryAntiBat()
+if _mysteryAntiBatConn then pcall(function() _mysteryAntiBatConn:Disconnect() end); _mysteryAntiBatConn = nil end
+_mysteryAntiBatSpeed = 10000
+_mysteryAntiBatAngle = 0
+_mysteryAntiBatDirection = 1
+_G._AmbitiousAntiBatDesiredXZ = nil
+_G._AmbitiousAntiBatSpiking = false
+end
+local function startMysteryAntiBat()
+stopMysteryAntiBat()
+_mysteryAntiBatConn = RunService.Heartbeat:Connect(function()
+if not S.mysteryAntiBatEnabled then return end
+if _G._ZombieAntiBatMovementBlocked then
+_G._AmbitiousAntiBatSpiking = false
+return
+end
+local char = LP.Character
+local root = char and char:FindFirstChild("HumanoidRootPart")
+if not root or not root.Parent then return end
+local origXZ = Vector3.new(root.Velocity.X, 0, root.Velocity.Z)
+_mysteryAntiBatSpeed = _mysteryAntiBatSpeed + (50 * _mysteryAntiBatDirection)
+if _mysteryAntiBatSpeed >= 20000 then _mysteryAntiBatSpeed = 20000; _mysteryAntiBatDirection = -1
+elseif _mysteryAntiBatSpeed <= 10000 then _mysteryAntiBatSpeed = 10000; _mysteryAntiBatDirection = 1 end
+_mysteryAntiBatAngle = _mysteryAntiBatAngle + (math.random() * 0.5)
+local radius = _mysteryAntiBatSpeed + math.random(-5000, 5000)
+local newX = math.cos(_mysteryAntiBatAngle) * radius
+local newZ = math.sin(_mysteryAntiBatAngle) * radius
+_G._AmbitiousAntiBatSpiking = true
+root.Velocity = Vector3.new(newX, root.Velocity.Y, newZ)
+RunService.RenderStepped:Wait()
+if root.Parent then
+local wanted = _G._AmbitiousAntiBatDesiredXZ
+if wanted then root.Velocity = Vector3.new(wanted.X, root.Velocity.Y, wanted.Z)
+else root.Velocity = Vector3.new(origXZ.X, root.Velocity.Y, origXZ.Z) end
+end
+_G._AmbitiousAntiBatSpiking = false
+end)
+end
+function F.setMysteryAntiBat(on)
+S.mysteryAntiBatEnabled = on == true
+if S.mysteryAntiBatEnabled then startMysteryAntiBat() else stopMysteryAntiBat() end
+end
+function F.startMysteryAntiBat() F.setMysteryAntiBat(true) end
+function F.stopMysteryAntiBat() F.setMysteryAntiBat(false) end
+
+LP.CharacterAdded:Connect(function()
+if S.mysteryAntiBatEnabled then task.wait(0.1); pcall(startMysteryAntiBat) else pcall(stopMysteryAntiBat) end
+end)
+end
+ _adDeathConns = {};  _adHeartConn = nil;  _adCharConn = nil;  _afsLoop = nil  _antiDie = { loop = nil, healthConn = nil, diedConn = nil, humanoid = nil, lastHealTime = 0, invincibleUntil = 0, config = { healthThreshold = 50, invincibilityFrames = 0.75, ragdollProtection = true, autoRevive = true }, }  function _adDisconnectHumanoid() if _antiDie.healthConn then pcall(function() _antiDie.healthConn:Disconnect() end); _antiDie.healthConn = nil end
+if _antiDie.diedConn then pcall(function() _antiDie.diedConn:Disconnect() end); _antiDie.diedConn = nil end _antiDie.humanoid = nil end  function _adDisconnectAll() for _, c in ipairs(_adDeathConns) do pcall(function() c:Disconnect() end) end _adDeathConns = {} if _adHeartConn then pcall(function() _adHeartConn:Disconnect() end); _adHeartConn = nil end _adDisconnectHumanoid() end  function _adSuperHeal(hum) if not hum or not hum.Parent then return end local maxHealth = hum.MaxHealth or 100 if maxHealth <= 0 or maxHealth == math.huge then maxHealth = 100 end pcall(function()
+hum.Health = maxHealth if hum.MaxHealth < maxHealth then hum.MaxHealth = maxHealth end end) _antiDie.invincibleUntil = tick() + (_antiDie.config.invincibilityFrames or 0.75) _antiDie.lastHealTime = tick() pcall(function() local char = hum.Parent if not char then return end for _, child in ipairs(char:GetChildren()) do if child:IsA("NumberValue") then local name = child.Name:lower() if name:find("health") or name:find("hp") or name:find("life") then child.Value = maxHealth end end if child:IsA("BoolValue") and child.Name:lower():find("dead") then child.Value = false end end end) end
+ function _adPreventDamage(root, hum) if not hum then return end if hum.Health < (hum.MaxHealth or 100) then _adSuperHeal(hum) end if tick() < (_antiDie.invincibleUntil or 0) then if hum.Health < (hum.MaxHealth or 100) then pcall(function() hum.Health = hum.MaxHealth or 100 end) end end if _antiDie.config.ragdollProtection then local state = hum:GetState() if state == Enum.HumanoidStateType.Physics or state == Enum.HumanoidStateType.Ragdoll or state == Enum.HumanoidStateType.FallingDown or state == Enum.HumanoidStateType.Dead then pcall(function()
+hum:ChangeState(Enum.HumanoidStateType.GettingUp) hum:ChangeState(Enum.HumanoidStateType.Running) end) _adSuperHeal(hum) if root then pcall(function() root.AssemblyAngularVelocity = Vector3.zero root.AssemblyLinearVelocity = Vector3.new( root.AssemblyLinearVelocity.X, math.max(root.AssemblyLinearVelocity.Y, -10), root.AssemblyLinearVelocity.Z ) end) end end end if hum.Health <= 0 then _adSuperHeal(hum) pcall(function() hum.PlatformStand = false hum.Sit = false hum:ChangeState(Enum.HumanoidStateType.GettingUp) end) end end function F.applyAntiReset()
+pcall(function() game:GetService("StarterGui"):SetCore("ResetButtonCallback", false) end) end function F.restoreReset() pcall(function() game:GetService("StarterGui"):SetCore("ResetButtonCallback", true) end) end  function protectCharClean(char) if not S.antiDieEnabled then return end char = char or LP.Character if not char then return end local hum = char:FindFirstChildOfClass("Humanoid") if not hum then local ok, waited; do local __m = {pcall(function() return char:WaitForChild("Humanoid", 3) end)}; ok = __m[1]; waited = __m[2]; end if ok and waited and waited:IsA("Humanoid") then hum = waited end end
+if not hum or not S.antiDieEnabled then return end _adDisconnectHumanoid() _antiDie.humanoid = hum pcall(function() hum.BreakJointsOnDeath = false hum:SetStateEnabled(Enum.HumanoidStateType.Dead, false) end) _adSuperHeal(hum) _antiDie.healthConn = hum:GetPropertyChangedSignal("Health"):Connect(function() if not S.antiDieEnabled or not hum.Parent then return end if hum.Health <= 0 or hum.Health < (_antiDie.config.healthThreshold or 50) then _adSuperHeal(
